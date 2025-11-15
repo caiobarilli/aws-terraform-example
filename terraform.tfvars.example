@@ -1,0 +1,6 @@
+# Chave SSH 
+key_name = "dev_key"        # Nome da chave SSH
+key_path = "id_ed25519.pub" # Caminho para o arquivo da chave pública SSH
+
+# SSH CIDR
+ssh_cidr = "187.44.101.48/32"
