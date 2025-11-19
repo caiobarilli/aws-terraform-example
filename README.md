@@ -21,14 +21,6 @@ Primeiro, execute o Terraform com os recursos do backend descomentados para cria
 terraform apply
 ```
 
-Depois de criados, comente os recursos do backend no código e aplique novamente:
-
-```
-terraform apply
-```
-
-Isso evita que o Terraform tente recriar ou destruir esses recursos.
-
 Em seguida, descomente a configuração do backend S3 no bloco terraform { backend "s3" {...} }.
 
 Rode o comando:
