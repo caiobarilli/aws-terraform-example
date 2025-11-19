@@ -7,7 +7,7 @@ resource "aws_security_group" "allow_ssh_http_https" {
     Name = "allow-ssh-http-https"
   }
 
-  # SSH — agora seguro e configurável
+  # SSH
   ingress {
     description = "SSH access"
     from_port   = 22

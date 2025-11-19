@@ -1,6 +1,23 @@
-# Chave SSH 
-key_name = "dev_key"        # Nome da chave SSH
-key_path = "id_ed25519.pub" # Caminho para o arquivo da chave pública SSH
+# Região
+aws_region = "us-east-1"
 
-# SSH CIDR
-ssh_cidr = "187.44.101.48/32"
+# AMI Ubuntu 24.04
+ami_name_pattern = "ubuntu/images/hvm-ssd*/ubuntu-noble-24.04-amd64-server-*"
+ami_owners       = ["099720109477"]
+
+# Instância
+instance_name = "example-server"
+instance_type = "t3.micro"
+
+# SSH
+key_name = "dev_key"
+key_path = "id_ed25519.pub"
+# ssh_cidr = "127.77.145.49/32" <~ DEV IP
+
+# Rede
+vpc_id        = "vpc-0f5cbc8c491c269ee"
+vpc_subnet_id = "subnet-0f898f79dabfbb7d5"
+
+# Volume adicional
+ec2_mountpoint   = "/mnt/example"
+ec2_volume_label = "example_vol" # max: 16 caracteres

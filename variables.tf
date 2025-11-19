@@ -28,13 +28,13 @@ variable "default_tags" {
 variable "ec2_mountpoint" {
   description = "Ponto de montagem do disco adicional"
   type        = string
-  default     = "/example_mountpoint"
+  default     = "/mnt/example"
 }
 
 variable "ec2_volume_label" {
   description = "Label do volume adicional"
   type        = string
-  default     = "example_volume"
+  default     = "example_vol" # max: 16 caracteres
 }
 
 variable "instance_name" {
@@ -64,6 +64,12 @@ variable "ssh_cidr" {
   description = "CIDR permitido para SSH"
   type        = string
   default     = "0.0.0.0/0"
+}
+
+variable "ssh_username" {
+  description = "Usuário SSH da instância"
+  type        = string
+  default     = "devops"
 }
 
 variable "vpc_id" {
