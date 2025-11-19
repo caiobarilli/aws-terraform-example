@@ -15,3 +15,5 @@ rm -rf /var/lib/apt/lists/*
 
 # Limita logs do systemd journals
 journalctl --vacuum-size=50M || true
+
+echo "==== [END] Cleanup ===="
