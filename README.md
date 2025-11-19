@@ -9,6 +9,40 @@ Este repositório provisiona uma infraestrutura completa na AWS usando Terraform
 - Backend remoto opcional (S3 + DynamoDB)
 - AMI localizada automaticamente via filtros
 
+# FLUXO DE BACKEND REMOTO
+
+Após rodar o terraform init, o estado inicial será salvo localmente.
+
+Para habilitar o backend remoto, siga o fluxo correto:
+
+Primeiro, execute o Terraform com os recursos do backend descomentados para criar o bucket S3 e a tabela DynamoDB:
+
+```
+terraform apply
+```
+
+Depois de criados, comente os recursos do backend no código e aplique novamente:
+
+```
+terraform apply
+```
+
+Isso evita que o Terraform tente recriar ou destruir esses recursos.
+
+Em seguida, descomente a configuração do backend S3 no bloco terraform { backend "s3" {...} }.
+
+Rode o comando:
+
+```
+terraform init -reconfigure
+```
+
+Confirme a migração do estado para o S3 quando solicitado.
+
+A partir desse ponto, o Terraform passa a usar o estado remoto armazenado no bucket S3, garantindo consistência e segurança em todas as execuções futuras.
+
+O backend remoto permite controle de concorrência, versionamento opcional do estado e facilita o uso do mesmo ambiente por múltiplos operadores ou máquinas.
+
 # Pré-requisitos
 
 - Conta AWS ativa
@@ -19,156 +53,32 @@ Este repositório provisiona uma infraestrutura completa na AWS usando Terraform
 - Terraform 1.5+
 - Chave pública SSH (id_ed25519.pub ou id_rsa.pub)
 
-# Criando o arquivo terraform.tfvars
+# WordPress One-Click (WordOps)
 
-Crie o arquivo:
-
-```
-cp terraform.tfvars.example terraform.tfvars
-nano terraform.tfvars
-```
-
-Use um conteúdo completo como este:
+Acesse a instância via SSH:
 
 ```
-# Região AWS
-aws_region        = "us-east-1"
-
-# AMI
-ami_name_pattern  = "ubuntu/images/hvm-ssd*/ubuntu-noble-24.04-amd64-server-*"
-ami_owners        = ["099720109477"] # Canonical
-
-# Instância
-instance_name     = "example-server"
-instance_type     = "t3.micro"
-
-# SSH e Key Pair
-key_name          = "dev_key"          # Nome da Key Pair na AWS
-key_path          = "id_ed25519.pub"   # Caminho da chave pública local
-ssh_cidr          = "192.157.61.69/32" # Seu IP para acesso SSH
-
-# VPC e Subnet
-vpc_id            = "vpc-0f5cbc8c491c269ee"
-vpc_subnet_id     = "subnet-0f898f79dabfbb7d5"
-
-# Volume EBS adicional
-ec2_mountpoint    = "/example_mountpoint"
-ec2_volume_label  = "example_volume"
-
+ssh devops@seu-endereco-ip
 ```
 
-# Fluxo recomendado de uso (PASSO A PASSO)
-
-Este projeto usa backend remoto (S3+DynamoDB), mas o fluxo correto é fazer um _bootstrap_ antes.
-
-## 1. BOOTSTRAP (rodar sem backend)
-
-Certifique-se de que o `backend.tf` está comentado:
+Instale o WordOps:
 
 ```
-# terraform {
-#   backend "s3" {
-#     bucket  = "terraform-state-example-4532423423422"
-#     key     = "terraform.tfstate"
-#     region  = "us-east-1"
-#     encrypt = true
-#   }
-# }
-
+wget -qO wo wops.cc && sudo bash wo
 ```
 
-Execute:
+Crie seu site WordPress com cache, PHP 8.4, Let's Encrypt, HSTS e senha administrativa:
 
 ```
-terraform init
-
-terraform plan
-
-terraform apply
+sudo wo site create meusite.com.br --wpfc --php84 --letsencrypt --hsts --pass='example' --email='jonh.doe@email.com'
 ```
-
-Isso cria:
-
-- A instância EC2
-- Volume EBS
-- Security Group
-- Script user_data montando o volume
-
-Ainda **sem backend remoto ativado**.
-
----
-
-# 2. CRIAR os recursos do backend remoto (S3 + DynamoDB)
-
-Descomente o arquivo `backend-resource.tf`:
-
-```
-resource "aws_s3_bucket" "terraform_state" {
-  bucket = "terraform-state-example-4532423423422"
-  lifecycle { prevent_destroy = true }
-}
-
-resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "terraform-locks-example-4532423423422"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "LockID"
-  attribute { name = "LockID" type = "S" }
-  lifecycle { prevent_destroy = true }
-}
-```
-
-Aplique:
-
-```
-terraform apply
-```
-
-Agora o bucket e a tabela existem.
-
----
-
-# 3. ATIVAR backend remoto S3 + DynamoDB
-
-Descomente o arquivo `backend.tf`:
-
-```
-terraform {
-  backend "s3" {
-    bucket         = "terraform-state-example-4532423423422"
-    key            = "terraform.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "terraform-locks-example-4532423423422"
-    encrypt        = true
-  }
-}
-```
-
-Execute:
-
-```
-terraform init
-```
-
-Terraform vai perguntar:
-
-```
-Do you want to copy the existing state to the new backend? (yes/no)
-```
-
-Responda:
-
-```
-yes
-```
-
-Agora o estado está no S3 e com locking no DynamoDB.
-
----
 
 # Comandos úteis
 
 ```
 terraform init
+
+terraform init -reconfigure
 
 terraform plan
 
@@ -179,4 +89,7 @@ terraform apply -replace="aws_instance.example-server"
 terraform output
 
 terraform destroy
+
+terraform console
+
 ```
