@@ -9,6 +9,16 @@ Este repositório provisiona uma infraestrutura completa na AWS usando Terraform
 - Backend remoto opcional (S3 + DynamoDB)
 - AMI localizada automaticamente via filtros
 
+# Pré-requisitos
+
+- Conta AWS ativa
+- AWS CLI configurado
+  ```
+  aws configure
+  ```
+- Terraform 1.5+
+- Chave pública SSH (id_ed25519.pub ou id_rsa.pub)
+
 # FLUXO DE BACKEND REMOTO
 
 Após rodar o terraform init, o estado inicial será salvo localmente.
@@ -35,15 +45,6 @@ A partir desse ponto, o Terraform passa a usar o estado remoto armazenado no buc
 
 O backend remoto permite controle de concorrência, versionamento opcional do estado e facilita o uso do mesmo ambiente por múltiplos operadores ou máquinas.
 
-# Pré-requisitos
-
-- Conta AWS ativa
-- AWS CLI configurado
-  ```
-  aws configure
-  ```
-- Terraform 1.5+
-- Chave pública SSH (id_ed25519.pub ou id_rsa.pub)
 
 # WordPress One-Click (WordOps)
 
