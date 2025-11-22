@@ -16,6 +16,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "availability_zone" {
+  description = "Zona de disponibilidade da instância"
+  type        = string
+  default     = "us-east-1a"
+}
+
 variable "default_tags" {
   description = "Tags aplicadas em todos os recursos"
   type        = map(string)
@@ -24,11 +30,6 @@ variable "default_tags" {
     customer  = "example"
     protocolo = "server"
   }
-}
-variable "availability_zone" {
-  description = "Zona de disponibilidade da instância"
-  type        = string
-  default     = "us-east-1a"
 }
 
 variable "device_name" {
