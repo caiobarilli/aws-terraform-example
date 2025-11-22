@@ -45,7 +45,6 @@ A partir desse ponto, o Terraform passa a usar o estado remoto armazenado no buc
 
 O backend remoto permite controle de concorrência, versionamento opcional do estado e facilita o uso do mesmo ambiente por múltiplos operadores ou máquinas.
 
-
 # WordPress One-Click (WordOps)
 
 Acesse a instância via SSH:
@@ -64,6 +63,28 @@ Crie seu site WordPress com cache, PHP 8.4, Let's Encrypt, HSTS e senha administ
 
 ```
 sudo wo site create meusite.com.br --wpfc --php84 --letsencrypt --hsts --pass='example' --email='jonh.doe@email.com'
+```
+
+Caso utilize uma instância com pouca memória (1GB ou menos), é recomendável adicionar swap para melhorar o desempenho do WordPress.
+
+```
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
+Para verificar o swap:
+
+```
+sudo swapon --show
+```
+
+Reinicie o servidor:
+
+```
+sudo reboot
 ```
 
 # Comandos úteis
