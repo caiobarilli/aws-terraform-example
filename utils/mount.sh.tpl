@@ -112,7 +112,7 @@ if ! getent group webdev >/dev/null; then
   groupadd webdev
 fi
 
-# Adicionar usuário desenvolvedores ao grupo webdev
+# Adicionar usuário devops ao grupo webdev
 usermod -aG webdev "$USER"
 
 # Ajustar dono e permissões do volume para permitir escrita pelo grupo
