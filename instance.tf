@@ -1,7 +1,8 @@
 resource "aws_instance" "example-server" {
-  ami           = data.aws_ami.selected.id
-  instance_type = var.instance_type
-  subnet_id     = var.vpc_subnet_id
+  ami               = data.aws_ami.selected.id
+  instance_type     = var.instance_type
+  availability_zone = var.availability_zone
+  subnet_id         = var.vpc_subnet_id
 
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.allow_ssh_http_https.id]
@@ -29,24 +30,28 @@ resource "aws_eip" "example-server" {
 
 resource "aws_ebs_volume" "example-server" {
   type              = "gp3"
-  availability_zone = aws_instance.example-server.availability_zone
-
-  size = 20 # tamanho do disco em GB
-
-  tags = var.default_tags
+  availability_zone = var.availability_zone
+  size              = var.ec2_volume_size_gb
+  tags              = var.default_tags
+  depends_on        = [aws_ebs_volume.example-server]
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
     ignore_changes  = [availability_zone] # evita recriar volume ao mudar AZ da instância
   }
 }
 
 resource "aws_volume_attachment" "example-server" {
-  device_name = "/dev/sdd" # onde o disco aparece no SO
+  device_name = var.device_name
   volume_id   = aws_ebs_volume.example-server.id
   instance_id = aws_instance.example-server.id
 
+  depends_on = [
+    aws_instance.example-server,
+    aws_ebs_volume.example-server
+  ]
+
   lifecycle {
-    ignore_changes = [instance_id] # evita desanexar volume ao mudar instância
+    ignore_changes = [device_name]
   }
 }

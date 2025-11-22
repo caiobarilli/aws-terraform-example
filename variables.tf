@@ -20,9 +20,21 @@ variable "default_tags" {
   description = "Tags aplicadas em todos os recursos"
   type        = map(string)
   default = {
+    Name      = "example"
     customer  = "example"
     protocolo = "server"
   }
+}
+variable "availability_zone" {
+  description = "Zona de disponibilidade da instância"
+  type        = string
+  default     = "us-east-1a"
+}
+
+variable "device_name" {
+  description = "Nome do dispositivo para anexar o volume EBS"
+  type        = string
+  default     = "/dev/sdd"
 }
 
 variable "ec2_mountpoint" {
@@ -35,6 +47,12 @@ variable "ec2_volume_label" {
   description = "Label do volume adicional"
   type        = string
   default     = "example_vol" # max: 16 caracteres
+}
+
+variable "ec2_volume_size_gb" {
+  description = "Tamanho do volume adicional em GB"
+  type        = number
+  default     = 40
 }
 
 variable "instance_name" {
