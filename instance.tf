@@ -36,7 +36,7 @@ resource "aws_ebs_volume" "example-server" {
   depends_on        = [aws_ebs_volume.example-server]
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
     ignore_changes  = [availability_zone] # evita recriar volume ao mudar AZ da instância
   }
 }
