@@ -32,9 +32,7 @@ apt-get install -y \
 
 echo "==== [END] Installing Packages ===="
 
-# ====================================================
-#   MOUNT SCRIPT (disco + /var/www)
-# ====================================================
+# Mount Script
 ${mount_script}
 
 # Cleanup Script
